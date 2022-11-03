@@ -1,3 +1,4 @@
+import { FormEvent, useState } from "react";
 import Image from "next/image";
 
 import { api } from "../lib/axios";
@@ -18,6 +19,31 @@ export default function Home({
   guessesCount,
   usersCount,
 }: HomeProps) {
+  const [poolTitle, setPoolTitle] = useState("");
+
+  const handleCreatePool = async (event: FormEvent) => {
+    event.preventDefault();
+
+    try {
+      const response = await api.post("/pools", {
+        title: poolTitle,
+      });
+
+      const { code } = response.data;
+
+      await navigator.clipboard.writeText(code);
+
+      alert(
+        "Bolão criado com sucesso, o código foi copiado para a área de transferência!"
+      );
+
+      setPoolTitle("");
+    } catch (error) {
+      alert("Erro ao criar o bolão, tente novamente.");
+      console.log(error);
+    }
+  };
+
   return (
     <div className="h-screen max-w-[1124px] mx-auto grid grid-cols-2 gap-28 items-center">
       <main>
@@ -35,13 +61,16 @@ export default function Home({
           </strong>
         </div>
 
-        <form className="mt-10 flex gap-2">
+        <form className="mt-10 flex gap-2" onSubmit={handleCreatePool}>
           <input
-            className="flex-1 px-6 py-4 rounded bg-gray-800 border border-gray-600 text-sm"
+            className="flex-1 px-6 py-4 rounded bg-gray-800 border border-gray-600 text-gray-100 text-sm"
             type="text"
             placeholder="Qual nome do seu bolão?"
             required
+            value={poolTitle}
+            onChange={(event) => setPoolTitle(event.target.value)}
           />
+
           <button
             className="bg-yellow-500 px-6 py-4 rounded text-gray-900 font-bold text-sm uppercase hover:bg-yellow-700"
             type="submit"
