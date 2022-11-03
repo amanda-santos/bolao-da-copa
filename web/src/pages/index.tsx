@@ -3,7 +3,7 @@ type HomeProps = {
 };
 
 export default function Home({ count }: HomeProps) {
-  return <h1>Number of pools: {count}</h1>;
+  return <h1 className="text-cyan-500">Number of pools: {count}</h1>;
 }
 
 export const getServerSideProps = async () => {
